@@ -1,4 +1,4 @@
-// atividade 01; Gabriel Montes e Gustavo Carreteiro;
+// atividade 01; Gabriel Montes e Gustavo Carretero;
 // funcionou do Gdb online
 
 #include <stdio.h>
