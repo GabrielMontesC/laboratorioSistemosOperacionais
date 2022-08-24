@@ -1,5 +1,5 @@
+// atividade 02, Ex.01: Gabriel Montes Chagas, Gustavo Carretero e Andrea Mindlin Tessler; // funcionou do Gdb online
 //atividade sistemas operacionais
-//exercicio 02
 
 #include <stdio.h>
 #include <stdlib.h>
