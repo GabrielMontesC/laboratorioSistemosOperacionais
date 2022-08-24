@@ -1,0 +1,41 @@
+
+//atividade sistemas operacionais
+//exercicio 01
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    FILE *pont_arq; //ponteiro que aponta para o arquivo
+    char c; //variavel tipo char, qeu vai receber a funcao fget e sera printada
+    int cout; //contador que vai contar as chamadas do SO..write(),read(), scanf(), open(), close(),
+    //registradores
+    cout = 0;
+    pont_arq = fopen("arquivo1.txt","r");//ponteiro que vai apontar para o arquivo
+    
+    if (pont_arq == NULL)//se ponteiro estiver vazio
+    {
+        printf("Erro ao tentar abrir o arquivo!");
+        exit(1);
+    }
+        printf("Lendo e exibindo os dados do arquivo \n\n");
+        cout ++;
+    
+    //Faça 
+    do
+    {  
+        //faz a leitura do caracter no arquivo apontado por pont_arq
+        c = fgetc(pont_arq);
+        cout ++;
+        //exibe o caracter lido na tela
+        printf("%c" , c);        
+        cout ++;
+    }while (c != EOF); //enquanto não for final de arquivo 
+        fclose(pont_arq); //fechando o arquivo
+    cout++;c++; //finalização do programa mais o da frase de baixo
+    
+    printf("\nO SO foi chamado %d vezes", cout);
+    
+    return(0);
+}
