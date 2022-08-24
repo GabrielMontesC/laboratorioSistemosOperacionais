@@ -1,0 +1,71 @@
+//atividade sistemas operacionais
+//exercicio 02
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    FILE *pont_arq; //ponteiro que aponta para o arquivo
+    FILE *pont_arq2; //ponteiro que aponta para o arquivo2
+    
+    int cout; //contador que vai contar as chamadas do SO..write(),read(), scanf(), open(), close(),registradores
+    cout = 0;
+    
+    int tamanho;
+    char frase[50];
+    char c; //variavel tipo char, qeu vai receber a funcao fget e sera printada
+    char d; //variavel tipo char, qeu vai receber a funcao fget e sera printada
+    
+    pont_arq = fopen("arquivo1.txt","w"); //ponteiro que vai apontar para o arquivo
+    // Arquivo aberto com W para evitar que o arquivo fique ilegível
+    if (pont_arq == NULL)//se ponteiro estiver vazio
+    {
+        printf("Erro ao tentar abrir o arquivo!");
+        exit(1);
+    }
+    
+    //EXCREVENDO VALORES NO ARQUIVO1
+    printf("Digite a frase a ser gravada no arquivo: ");
+    gets(frase);
+  
+    //verificando a quantidade de caracteres da string frase
+    tamanho=strlen(frase);
+  
+    //gravando caracter por caracter
+     for(int i=0; i < tamanho; i++){
+        fputc(frase[i], pont_arq);    
+    }
+    cout++;
+    
+    tamanho = strlen(frase);
+    pont_arq2 = fopen("arquivo2.txt","w"); //ponteiro que vai apontar para o arquivo
+    // Arquivo aberto com W para evitar que o arquivo fique ilegível
+    cout++;
+    //Faça 
+    do
+    {  
+        //faz a leitura do caracter no arquivo apontaando por pont_arq1 e pont_arq2
+        c = fgetc(pont_arq);
+        cout++;
+        d = fgetc(pont_arq2);
+        cout++;
+        for(int i=0; i < tamanho; i++)
+        {
+            fputc(frase[i], pont_arq2);    
+            cout++;
+        }
+        
+        // printar c e d no arquivo2
+        printf("%c" , d);cout++;
+        printf("%c" , c);cout++;
+    }while (c != EOF); //enquanto não for final de arquivo 
+        
+    fclose(pont_arq2); //fechando o arquivo2
+    cout++;
+    fclose(pont_arq); //fechando o arquivo
+    cout++;
+    printf("\nO SO foi chamado %d vezes", cout);
+    
+    return(0);
+}
