@@ -1,0 +1,100 @@
+/*Gabriel Montes Chagas ; Andrea Mindlin Tessler 
+turma 04n11
+[Sistemas Operacionais Projeto 01 problema dos Filosofos]
+trabalho de sistemas operacionais codigo com auxilio de site: 
+http://cocic.cm.utfpr.edu.br/progconcorrente/doku.php?id=c_pthreads */
+
+#include <pthread.h> //bilbioteca para insercao de threads
+#include <stdio.h> //biblioteca impressao na tela       
+#include <stdlib.h> //biblioteca para uso catactere
+#include <unistd.h> //biblioteca para uso de POSIX
+
+typedef struct
+{
+  
+pthread_mutex_t * garfo_esq, *garfo_dir; //ptr garfo esquerdo e ptr garfo direito
+  const char *nome; //ponteiro que aponta para nomes
+  pthread_t thread;	//thread
+} filosofo;	//filososfos 
+
+void *funcaoFilosofo (void *p){	//funcao filosofos que a thread executa
+    
+    filosofo *p_ptr = (filosofo *) p; //ponteiro tipo filosofo apontata para filosofo
+  
+    while (1){	// enquanto... printa que filosofo apontado esta pensando
+        printf ("%s esta pensando...\n", p_ptr->nome); //printa prt que aponta para nome 
+        sleep (1 + rand () % 5); //timer pseudorandomico ciclico de 0 a 5 
+        
+        /*EXPLICACOES OBRIGATORIAS:
+        AQUI E ONDE A FUNCAO JA FOI CHAMADA INDIVIDUAMENTE POR CADA UMA DAS 5 THREADS CRIADAS, CADA UMA DELAS
+        PASSARA POR TODAS AS INSTRUCOES DESCRITAS NO COODIGO, BASICAMENTE OS PONTEIROS VAO APONTAR PRA UM NOME que
+        EVENTUALMENTE SERA PRINTADO NA TELA, E O SEMAFORO FARA A OSCILACAO ENTRE AS ACOES DE CADA UM DOS FILOSOFOS(PENSANDO,COMENDO)
+        QUANDO O FILOSOFO ESTA COM FOME, OPOS O TEMPO DE 0 A 8 SEGUNDOS ELE COMECERA A COMER*/
+        
+        printf ("%s esta com fome...\n", p_ptr->nome); //printa que filosodo apontado ta com fome
+      
+        pthread_mutex_lock (p_ptr->garfo_esq); //semaforo tranca garfo da esquerda que filosofo aponta
+        pthread_mutex_lock (p_ptr->garfo_dir); //semaforo tranca garfo da direita que filosofo aponta
+      
+        printf ("%s esta pensando...\n", p_ptr->nome);	//printa que filsofo na posse dos ponteiros esq e dir esta comendo
+        sleep (1 + rand () % 8); //timer pseudorandomico ciclico de 0 a 8
+      
+        pthread_mutex_unlock (p_ptr->garfo_dir); // semaforo destranca garfo da esquerda que filosofo aponta
+        pthread_mutex_unlock (p_ptr->garfo_esq); // semaforo destranca garfo da direita que filosofo aponta
+      
+        printf ("%s esta comendo...\n", p_ptr->nome); // printa que terminou de comer, pois semaforo bloqueia acesso
+    }
+    return NULL; //encerra a funcao vazia com null
+}
+
+int main (){ // principal
+
+    const char *nomeLista[] = { "Kante", "Kratos", "Russomano", "Grifith", "Python" }; //nome dos filosofos da mesa
+    pthread_mutex_t garfos[5]; //criçao das 5 threads
+    filosofo ** filosofo = malloc (sizeof (*filosofo) * 5); //ponteiro do tipo filosofo aponta para espaco alocado para filosofos
+    int i; //contador inteiro para se referir as threads unitariamente no codigo
+  
+    for (i = 0; i < 5; i++){
+        pthread_mutex_init (&garfos[i], NULL); //cria os 5 semaforos que serao utilizados representa disponibildiade dos garfos
+    }
+ 
+    for (i = 0; i < 4; i++){
+        filosofo[i] = malloc (sizeof (*filosofo[i])); //aloca filosos i na posicao i do vetor filosofos
+        filosofo[i]->nome = nomeLista[i]; //nome da estrutura vetor filosofos recebe nomes dos filosodos da lista
+        filosofo[i]->garfo_esq = &garfos[i]; // ptr esq do cont filosofos de endrco i, aponta pra o endrco do vetor garfo i
+        filosofo[i]->garfo_dir = &garfos[(i + 1) % 5]; //ptr dir do cont filosofos de endrco i, aponta pra o endrco vetor garfo (i+1) mod 5
+        pthread_create (&filosofo[i]->thread, NULL, funcaoFilosofo,filosofo[i]); 
+        //cria a tread de tipo filosofo posicao i, usando o metodo funcaoFilosofo e como arg funcao vetor filosofos
+        
+    /*EXPLICACOES OBRIGATORIAS:
+    AQUI E O MOMENTO EM QUE DE FATO A SICRONIZACAO OCORRE, POIS E ONDE AS THREADS SAO CRIADAS, QUASE QUE SIMULTANEAMENTE
+    CADA FILOSOFO RECEBE UMA THREAD, QUE EVENTUALEMTE PELO SEMAFORO, RECEBERAO OS ESTADOS LOCK OU UNLOCK*/
+    }
+  
+
+    //O ultimo filosofo pega os garfos na ordem contraria
+    filosofo[i] = malloc (sizeof (*filosofo[i])); //aloca filosofos i na posição i do vetor filosofos
+    filosofo[i]->nome = nomeLista[i]; //nome da estrutura vetor filosofos recebe nomes dos filosofos da lista
+    filosofo[i]->garfo_esq = &garfos[(i + 1) % 5];  //ptr esq do constructor filosofos de edreco i, aponta pra o ederço do garfo (i+1) mod5
+    filosofo[i]->garfo_dir = &garfos[i]; //ptr dir do aponta para o endereços do vetor garfo i
+    pthread_create (&filosofo[i]->thread, NULL, funcaoFilosofo, filosofo[i]);
+    //cria a tread de tipo filosofo posicao i, usando o metodo funcaoFilosofo e como arg. funcao vetor filosofos
+
+    /*EXPLICACOES OBRIGATORIAS:
+    AQUI E O MOMENTO EM QUE DE FATO A SICRONIZACAO OCORRE, POIS E ONDE AS THREADS SAO CRIADAS, QUASE QUE SIMULTANEAMENTE
+    CADA FILOSOFO RECEBE UMA THREAD, QUE EVENTUALEMTE PELO SEMAFORO, RECEBERAO OS ESTADOS LOCK OU UNLOCK 
+    OBS: A FUNÇÃO ESTA REPETIDA, NO ENTANTO SE FOR RETIRADA, UM DOS FISOFOS É EXCLUIDO DE SICRONIA ENTRE AS THREADS*/
+
+  
+    pthread_exit (NULL);
+    //elimina as thrads que foram criadas
+    return 0;
+    //obs: o programa nao deve ser encerrado pois esta funcionando em um loop, em caso de erro sera retornado mensagem informando "KILLED"
+    //encerra o programa em caso de sucesso e retorna 0
+}
+
+
+  
+ 
+  
+ 
