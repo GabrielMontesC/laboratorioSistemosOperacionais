@@ -5,7 +5,7 @@ trabalho de sistemas operacionais codigo com auxilio de site:
 http://cocic.cm.utfpr.edu.br/progconcorrente/doku.php?id=c_pthreads */
 
 #include <pthread.h> //bilbioteca para insercao de threads
-#include <stdio.h> //biblioteca impressao na tela       
+#include <stdio.h> //biblioteca para impressao na tela      
 #include <stdlib.h> //biblioteca para uso catactere
 #include <unistd.h> //biblioteca para uso de POSIX
 
@@ -31,7 +31,7 @@ void *funcaoFilosofo (void *p){	//funcao filosofos que a thread executa
         EVENTUALMENTE SERA PRINTADO NA TELA, E O SEMAFORO FARA A OSCILACAO ENTRE AS ACOES DE CADA UM DOS FILOSOFOS(PENSANDO,COMENDO)
         QUANDO O FILOSOFO ESTA COM FOME, OPOS O TEMPO DE 0 A 8 SEGUNDOS ELE COMECERA A COMER*/
         
-        printf ("%s esta com fome...\n", p_ptr->nome); //printa que filosodo apontado ta com fome
+        printf ("%s esta com fome...\n", p_ptr->nome); //printa que filosodo apontado esta com fome
       
         pthread_mutex_lock (p_ptr->garfo_esq); //semaforo tranca garfo da esquerda que filosofo aponta
         pthread_mutex_lock (p_ptr->garfo_dir); //semaforo tranca garfo da direita que filosofo aponta
@@ -61,8 +61,8 @@ int main (){ // principal
     for (i = 0; i < 4; i++){
         filosofo[i] = malloc (sizeof (*filosofo[i])); //aloca filosos i na posicao i do vetor filosofos
         filosofo[i]->nome = nomeLista[i]; //nome da estrutura vetor filosofos recebe nomes dos filosodos da lista
-        filosofo[i]->garfo_esq = &garfos[i]; // ptr esq do cont filosofos de endrco i, aponta pra o endrco do vetor garfo i
         filosofo[i]->garfo_dir = &garfos[(i + 1) % 5]; //ptr dir do cont filosofos de endrco i, aponta pra o endrco vetor garfo (i+1) mod 5
+        filosofo[i]->garfo_esq = &garfos[i]; // ptr esq do cont filosofos de endrco i, aponta pra o endrco do vetor garfo i
         pthread_create (&filosofo[i]->thread, NULL, funcaoFilosofo,filosofo[i]); 
         //cria a tread de tipo filosofo posicao i, usando o metodo funcaoFilosofo e como arg funcao vetor filosofos
         
@@ -75,12 +75,13 @@ int main (){ // principal
     //O ultimo filosofo pega os garfos na ordem contraria
     filosofo[i] = malloc (sizeof (*filosofo[i])); //aloca filosofos i na posição i do vetor filosofos
     filosofo[i]->nome = nomeLista[i]; //nome da estrutura vetor filosofos recebe nomes dos filosofos da lista
-    filosofo[i]->garfo_esq = &garfos[(i + 1) % 5];  //ptr esq do constructor filosofos de edreco i, aponta pra o ederço do garfo (i+1) mod5
     filosofo[i]->garfo_dir = &garfos[i]; //ptr dir do aponta para o endereços do vetor garfo i
+    filosofo[i]->garfo_esq = &garfos[(i + 1) % 5];  //ptr esq do constructor filosofos de edreco i, aponta pra o ederço do garfo (i+1) mod5
+    
     pthread_create (&filosofo[i]->thread, NULL, funcaoFilosofo, filosofo[i]);
     //cria a tread de tipo filosofo posicao i, usando o metodo funcaoFilosofo e como arg. funcao vetor filosofos
 
-    /*EXPLICACOES OBRIGATORIAS:
+    /*EXPLICAÇOES OBRIGATORIAS:
     AQUI E O MOMENTO EM QUE DE FATO A SICRONIZACAO OCORRE, POIS E ONDE AS THREADS SAO CRIADAS, QUASE QUE SIMULTANEAMENTE
     CADA FILOSOFO RECEBE UMA THREAD, QUE EVENTUALEMTE PELO SEMAFORO, RECEBERAO OS ESTADOS LOCK OU UNLOCK 
     OBS: A FUNÇÃO ESTA REPETIDA, NO ENTANTO SE FOR RETIRADA, UM DOS FISOFOS É EXCLUIDO DE SICRONIA ENTRE AS THREADS*/
