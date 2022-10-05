@@ -1,0 +1,10 @@
+git init
+git remote add
+gir remote remove
+git commit -m ""
+git push
+
+
+
+git rebase
+git status
