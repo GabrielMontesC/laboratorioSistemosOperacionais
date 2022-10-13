@@ -1,0 +1,80 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<pthread.h>
+
+
+pthread_t thread_1;
+pthread_t thread_2;
+pthread_t thread_3;
+
+int a[3][2] = {{1, 4}, {2, 5}, {3, 6}};
+int b[2][3] = {{7, 8, 9}, {10, 11, 12}};
+int c[3][3] = {{1, 2, 3}, {0, 0, 0}, {0, 0, 0}};
+
+void* tarefa_1(void *p)
+{
+      printf("\nThread1\n");
+      for (int col = 0; col < 3; col++) {
+            // Multiplica a linha de A pela coluna de B.
+            for (int i = 0; i < 2; i++) {
+                c[1][col] += a[1][i] * b[i][col];
+            }
+            printf("%i\t",c[1][col]);
+            printf("\n");
+      }
+}
+
+void* tarefa_2(void *p)
+{
+      printf("\nThread2\n");
+      for (int col = 0; col < 3; col++) {
+            // Multiplica a linha de A pela coluna de B.
+            for (int i = 0; i < 2; i++) {
+                c[2][col] += a[2][i] * b[i][col];
+            }
+            printf("%i\t",c[2][col]);
+            printf("\n");
+      }
+     
+}
+void* tarefa_3(void *p)
+{
+      printf("\nThread3\n");
+      for (int col = 0; col < 3; col++) {
+            // Multiplica a linha de A pela coluna de B.
+            for (int i = 0; i < 2; i++) {
+                c[3][col] += a[3][i] * b[i][col];
+            }
+            printf("%i\t",c[3][col]);
+            printf("\n");
+      }
+     
+}
+
+int main()
+{
+   printf("Inicio das Threads...\n");
+   
+    // inicia as duas threads, passando como parametroa thread e a função que cada uma deve executar
+   
+    pthread_create(&thread_1, NULL, tarefa_1, NULL);
+    pthread_create(&thread_2, NULL, tarefa_2, NULL);
+    pthread_create(&thread_3, NULL, tarefa_3, NULL);
+   
+    // faz com que a thread principal espere a thread 1,2,3 acabarem;
+   
+    pthread_join(thread_1, NULL);
+    pthread_join(thread_2, NULL);
+    pthread_join(thread_3, NULL);
+    printf("resultado da tabela 3\n");
+
+    
+        for(int i = 0;i<3; i++){
+                for(int j= 0; j<3;j++){
+              printf("%i\t  ",c[i][j]);
+                }
+                printf("\n");
+        }
+
+    exit(0);
+}
